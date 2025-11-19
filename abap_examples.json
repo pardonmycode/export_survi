@@ -1,0 +1,27 @@
+ [ 
+{
+    "Instructions": "Use a FOR loop to create a new internal table with squared values.",
+    "solution": "CLASS zcl_internal_table_example16 DEFINITION.\n  PUBLIC SECTION.\n    METHODS execute.\nENDCLASS.\n\nCLASS zcl_internal_table_example16 IMPLEMENTATION.\n  METHOD execute.\n    DATA: lt_numbers TYPE TABLE OF i,\n          lt_squared TYPE TABLE OF i.\n\n    APPEND 1 TO lt_numbers.\n    APPEND 2 TO lt_numbers.\n    APPEND 3 TO lt_numbers.\n\n    LOOP AT lt_numbers INTO DATA(lv_number).\n      APPEND lv_number ** 2 TO lt_squared.\n    ENDLOOP.\n\n    WRITE: / 'Squared values:', lt_squared.\n  ENDMETHOD.\nENDCLASS.",
+    "unit_test": "CLASS zcl_internal_table_example16_test DEFINITION.\n  METHOD test_execute.\n    DATA(lo_example) = NEW zcl_internal_table_example16( ).\n    lo_example->execute( ).\n  ENDMETHOD.\nENDCLASS."
+  },
+  {
+    "Instructions": "Use a WHILE loop to read values from an internal table until it is empty.",
+    "solution": "CLASS zcl_internal_table_example17 DEFINITION.\n  PUBLIC SECTION.\n    METHODS execute.\nENDCLASS.\n\nCLASS zcl_internal_table_example17 IMPLEMENTATION.\n  METHOD execute.\n    DATA: lt_numbers TYPE TABLE OF i,\n          lv_value TYPE i,\n          lv_index TYPE i VALUE 1.\n\n    APPEND 10 TO lt_numbers.\n    APPEND 20 TO lt_numbers.\n\n    WHILE lines( lt_numbers ) > 0.\n      lv_value = lt_numbers[ 1 ].\n      WRITE: / 'Value:', lv_value.\n      DELETE lt_numbers INDEX 1.\n    ENDWHILE.\n  ENDMETHOD.\nENDCLASS.",
+    "unit_test": "CLASS zcl_internal_table_example17_test DEFINITION.\n  METHOD test_execute.\n    DATA(lo_example) = NEW zcl_internal_table_example17( ).\n    lo_example->execute( ).\n  ENDMETHOD.\nENDCLASS."
+  },
+  {
+    "Instructions": "Use a GROUP BY statement to calculate the sum of numbers in an internal table.",
+    "solution": "CLASS zcl_internal_table_example18 DEFINITION.\n  PUBLIC SECTION.\n    METHODS execute.\nENDCLASS.\n\nCLASS zcl_internal_table_example18 IMPLEMENTATION.\n  METHOD execute.\n    DATA: lt_numbers TYPE TABLE OF i,\n          lv_sum TYPE i.\n\n    APPEND 2 TO lt_numbers.\n    APPEND 2 TO lt_numbers.\n    APPEND 3 TO lt_numbers.\n\n    LOOP AT lt_numbers INTO lv_sum GROUP BY lv_sum.\n      WRITE: / 'Sum:', lv_sum.\n    ENDLOOP.\n  ENDMETHOD.\nENDCLASS.",
+    "unit_test": "CLASS zcl_internal_table_example18_test DEFINITION.\n  METHOD test_execute.\n    DATA(lo_example) = NEW zcl_internal_table_example18( ).\n    lo_example->execute( ).\n  ENDMETHOD.\nENDCLASS."
+  },
+  {
+    "Instructions": "Use an IF statement to check for positive and negative numbers.",
+    "solution": "CLASS zcl_internal_table_example19 DEFINITION.\n  PUBLIC SECTION.\n    METHODS execute.\nENDCLASS.\n\nCLASS zcl_internal_table_example19 IMPLEMENTATION.\n  METHOD execute.\n    DATA: lt_numbers TYPE TABLE OF i.\n\n    APPEND -5 TO lt_numbers.\n    APPEND 0 TO lt_numbers.\n    APPEND 5 TO lt_numbers.\n\n    LOOP AT lt_numbers INTO DATA(lv_number).\n      IF lv_number < 0.\n        WRITE: / lv_number, 'is negative'.\n      ELSEIF lv_number > 0.\n        WRITE: / lv_number, 'is positive'.\n      ELSE.\n        WRITE: / lv_number, 'is zero'.\n      ENDIF.\n    ENDLOOP.\n  ENDMETHOD.\nENDCLASS.",
+    "unit_test": "CLASS zcl_internal_table_example19_test DEFINITION.\n  METHOD test_execute.\n    DATA(lo_example) = NEW zcl_internal_table_example19( ).\n    lo_example->execute( ).\n  ENDMETHOD.\nENDCLASS."
+  },
+  {
+    "Instructions": "Use a WHEN statement in a nested IF to provide complex conditions.",
+    "solution": "CLASS zcl_internal_table_example20 DEFINITION.\n  PUBLIC SECTION.\n    METHODS execute.\nENDCLASS.\n\nCLASS zcl_internal_table_example20 IMPLEMENTATION.\n  METHOD execute.\n    DATA: lt_numbers TYPE TABLE OF i,\n          lv_output TYPE string.\n\n    APPEND 10 TO lt_numbers.\n    APPEND 25 TO lt_numbers.\n    APPEND 30 TO lt_numbers.\n\n    LOOP AT lt_numbers INTO DATA(lv_number).\n      IF lv_number < 20.\n        lv_output = 'Low'.\n      ELSE.\n        lv_output = 'High'.\n      ENDIF.\n      CASE lv_number.\n        WHEN 10.\n          lv_output = 'Exactly ten!'.\n        WHEN 20.\n          lv_output = 'Exactly twenty!'.\n      ENDCASE.\n      WRITE: / 'Number:', lv_number, 'Output:', lv_output.\n    ENDLOOP.\n  ENDMETHOD.\nENDCLASS.",
+    "unit_test": "CLASS zcl_internal_table_example20_test DEFINITION.\n  METHOD test_execute.\n    DATA(lo_example) = NEW zcl_internal_table_example20( ).\n    lo_example->execute( ).\n  ENDMETHOD.\nENDCLASS."
+  }
+]
