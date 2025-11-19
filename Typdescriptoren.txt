@@ -1,0 +1,112 @@
+Verwendung von Typdescriptoren
+Datenelement
+1
+2
+3
+4
+5
+6
+DATA(lv_i) = 1.
+DATA(o_elem_desc) = CAST cl_abap_elemdescr( cl_abap_typedescr=>describe_by_data( lv_i ) ).
+cl_demo_output=>write_data( o_elem_desc->kind ).
+cl_demo_output=>write_data( o_elem_desc->type_kind ).
+cl_demo_output=>write_data( o_elem_desc->output_length ).
+cl_demo_output=>display( ).
+Struct
+1
+2
+3
+4
+5
+DATA(lv_struct) = VALUE rsdsselopt( ).
+DATA(o_struct_desc) = CAST cl_abap_structdescr( cl_abap_typedescr=>describe_by_data( lv_struct ) ).
+cl_demo_output=>write_data( o_struct_desc->kind ).
+cl_demo_output=>write_data( o_struct_desc->components ).
+cl_demo_output=>display( ).
+Table
+1
+2
+3
+4
+5
+6
+7
+8
+DATA(lv_table) = VALUE rseloption( ).
+DATA(o_table_desc) = CAST cl_abap_tabledescr( cl_abap_typedescr=>describe_by_data( lv_table ) ).
+DATA(o_tl_struct_desc) = CAST cl_abap_structdescr( o_table_desc->get_table_line_type( ) ).
+cl_demo_output=>write_data( o_table_desc->kind ).
+cl_demo_output=>write_data( o_table_desc->table_kind ).
+cl_demo_output=>write_data( o_tl_struct_desc->kind ).
+cl_demo_output=>write_data( o_tl_struct_desc->components ).
+cl_demo_output=>display( ).
+Klasse
+1
+2
+3
+4
+5
+6
+7
+DATA(o_class) = NEW cl_abap_codepage( ).
+DATA(o_class_desc) = CAST cl_abap_classdescr( cl_abap_typedescr=>describe_by_object_ref( o_class ) ).
+cl_demo_output=>write_data( o_class_desc->kind ).
+LOOP AT o_class_desc->methods ASSIGNING FIELD-SYMBOL(<m>).
+  cl_demo_output=>write( <m>-name ).
+ENDLOOP.
+cl_demo_output=>display( ).
+Interface
+1
+2
+3
+4
+5
+6
+DATA(o_if_desc) = CAST cl_abap_intfdescr( cl_abap_typedescr=>describe_by_name( 'IF_RANDOM_NUMBER' ) ).
+cl_demo_output=>write_data( o_if_desc->kind ).
+LOOP AT o_if_desc->methods ASSIGNING FIELD-SYMBOL(<i>).
+  cl_demo_output=>write( <i>-name ).
+ENDLOOP.
+cl_demo_output=>display( ).
+Referenz
+1
+2
+3
+4
+5
+6
+7
+DATA(lv_i10) = 10.
+DATA(o_ref) = REF #( lv_i10 ).
+DATA(o_ref_desc) = CAST cl_abap_refdescr( cl_abap_typedescr=>describe_by_data( o_ref ) ).
+cl_demo_output=>write_data( o_ref_desc->kind ).
+cl_demo_output=>write_data( o_ref_desc->type_kind ).
+cl_demo_output=>write_data( o_ref_desc->absolute_name ).
+cl_demo_output=>display( ).
+Enumerator
+01
+02
+03
+04
+05
+06
+07
+08
+09
+10
+11
+12
+13
+TYPES: BEGIN OF ENUM e_drive_mode BASE TYPE symsgty,
+         unknown  VALUE IS INITIAL,
+         forward  VALUE 'F',
+         backward VALUE 'B',
+       END OF ENUM e_drive_mode.
+ 
+DATA(lv_enum) = VALUE e_drive_mode( ).
+DATA(o_enum_desc) = CAST cl_abap_enumdescr( cl_abap_typedescr=>describe_by_data( lv_enum ) ).
+cl_demo_output=>write_data( o_enum_desc->kind ).
+cl_demo_output=>write_data( o_enum_desc->type_kind ).
+cl_demo_output=>write_data( o_enum_desc->base_type_kind ).
+cl_demo_output=>write_data( o_enum_desc->members ).
+cl_demo_output=>display( ).
