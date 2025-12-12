@@ -1,0 +1,353 @@
+[
+  {
+    "Scenario": "DATA and FIELD-SYMBOLS declarations",
+    "Before 7.40": "DATA: lv_matnr TYPE matnr.\nFIELD-SYMBOLS: <fs_data> TYPE any.",
+    "With 7.40": "DATA(lv_matnr) = 'MAT123'.\nFIELD-SYMBOL(<fs_data>) TYPE any."
+  },
+  {
+    "Scenario": "MOVE CORRESPONDING",
+    "Before 7.40": "MOVE-CORRESPONDING struc1 TO struc2.",
+    "With 7.40": "struc2 = CORRESPONDING #( struc1 )."
+  },
+  {
+    "Scenario": "Manual field assignment",
+    "Before 7.40": "struc1-field1 = struc2-fielda.\nstruc1-field2 = struc2-fieldb.",
+    "With 7.40": "struc1 = VALUE #( BASE struc1 field1 = struc2-fielda field2 = struc2-fieldb )."
+  },
+  {
+    "Scenario": "CREATE DATA/CREATE OBJECT",
+    "Before 7.40": "DATA: lo_obj TYPE REF TO cl_class.\nCREATE OBJECT lo_obj.",
+    "With 7.40": "DATA(lo_obj) = NEW cl_class( )."
+  },
+  {
+    "Scenario": "GET REFERENCE OF",
+    "Before 7.40": "DATA: lr_data TYPE REF TO data.\nGET REFERENCE OF lv_value INTO lr_data.",
+    "With 7.40": "DATA(lr_data) = REF #( lv_value )."
+  },
+  {
+    "Scenario": "Single-use variables",
+    "Before 7.40": "DATA: lv_date TYPE d.\nlv_date = sy-datum.\nCALL METHOD process_date EXPORTING iv_date = lv_date.",
+    "With 7.40": "process_date( iv_date = sy-datum )."
+  },
+  {
+    "Scenario": "Type conversion helpers",
+    "Before 7.40": "DATA: lv_char TYPE c LENGTH 10,\n      lv_string TYPE string.\nlv_char = '123'.\nlv_string = lv_char.",
+    "With 7.40": "DATA(lv_string) = CONV string( '123' )."
+  },
+  {
+    "Scenario": "Casting with ?=",
+    "Before 7.40": "DATA: lo_super TYPE REF TO cl_super,\n      lo_sub TYPE REF TO cl_sub.\nlo_sub ?= lo_super.",
+    "With 7.40": "DATA(lo_sub) = CAST cl_sub( lo_super )."
+  },
+  {
+    "Scenario": "Conditional assignment",
+    "Before 7.40": "IF sy-subrc = 0.\n  lv_status = 'OK'.\nELSE.\n  lv_status = 'ERROR'.\nENDIF.",
+    "With 7.40": "lv_status = COND #( WHEN sy-subrc = 0 THEN 'OK' ELSE 'ERROR' )."
+  },
+  {
+    "Scenario": "READ TABLE",
+    "Before 7.40": "READ TABLE lt_data TRANSPORTING NO FIELDS WITH KEY matnr = '123'.\nIF sy-subrc = 0.\n  ...\nENDIF.",
+    "With 7.40": "TRY.\n    DATA(ls_data) = lt_data[ matnr = '123' ].\n    \"...\nCATCH cx_sy_itab_line_not_found.\n    \"...\nENDTRY."
+  },
+  {
+    "Scenario": "Check table existence",
+    "Before 7.40": "READ TABLE lt_data TRANSPORTING NO FIELDS WITH KEY matnr = '123'.",
+    "With 7.40": "IF line_exists( lt_data[ matnr = '123' ] ).\n  \"...\nENDIF."
+  },
+  {
+    "Scenario": "DEFAULT KEY tables",
+    "Before 7.40": "DATA: lt_data TYPE STANDARD TABLE OF mara WITH DEFAULT KEY.",
+    "With 7.40": "DATA: lt_data TYPE STANDARD TABLE OF mara WITH EMPTY KEY."
+  },
+  {
+    "Scenario": "LOOP processing",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data>.\n  \"...\nENDLOOP.",
+    "With 7.40": "DATA(lt_result) = VALUE string_table( FOR ls_data IN lt_data ( ls_data-matnr ) )."
+  },
+  {
+    "Scenario": "Method result checks",
+    "Before 7.40": "IF get_status( ) = abap_true.",
+    "With 7.40": "IF get_status( )."
+  },
+  {
+    "Scenario": "DO/WHILE loops",
+    "Before 7.40": "DO 10 TIMES.\n  \"...\nENDDO.",
+    "With 7.40": "DATA(lt_result) = VALUE int_tab( FOR i = 1 UNTIL i > 10 ( i ) )."
+  },
+  {
+    "Scenario": "Data aggregation",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data>.\n  lv_total += <fs_data>-amount.\nENDLOOP.",
+    "With 7.40": "DATA(lv_total) = REDUCE i( INIT sum = 0 FOR ls_data IN lt_data NEXT sum = sum + ls_data-amount )."
+  },
+  {
+    "Scenario": "Grouped data processing",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data>.\n  AT NEW matnr.\n    \"...\n  ENDAT.\nENDLOOP.",
+    "With 7.40": "LOOP AT lt_data INTO DATA(ls_data) GROUP BY ( matnr = ls_data-matnr ).\n  \"...\nENDLOOP."
+  },
+  {
+    "Scenario": "Filtering data",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data> WHERE matnr = '123'.\n  DELETE lt_data.\nENDLOOP.",
+    "With 7.40": "lt_data = FILTER #( lt_data WHERE matnr = '123' )."
+  },
+  {
+    "Scenario": "Type checking",
+    "Before 7.40": "DATA(lo_desc) = CAST cl_abap_typedescr( cl_abap_typedescr=>describe_by_data( lv_data ) ).",
+    "With 7.40": "CASE TYPE OF lv_data.\n  WHEN TYPE string.\n    \"...\n  WHEN OTHERS.\n    \"...\nENDCASE."
+  },
+  {
+    "Scenario": "String concatenation",
+    "Before 7.40": "CONCATENATE 'Hello' sy-uname INTO lv_text SEPARATED BY space.",
+    "With 7.40": "lv_text = |Hello { sy-uname }|."
+  },
+  {
+    "Scenario": "SQL expressions",
+    "Before 7.40": "SELECT matnr, mtart FROM mara INTO TABLE @lt_data WHERE matnr = @lv_matnr.",
+    "With 7.40": "SELECT FROM mara\n  FIELDS matnr, mtart\n  WHERE matnr = @lv_matnr\n  INTO TABLE @DATA(lt_data)."
+  },
+  {
+    "Scenario": "Structure initialization",
+    "Before 7.40": "DATA: ls_data TYPE ty_s_data.\nls_data-field1 = 'Value1'.\nls_data-field2 = 'Value2'.\nls_data-field3 = 'Value3'.",
+    "With 7.40": "DATA(ls_data) = VALUE ty_s_data( field1 = 'Value1' field2 = 'Value2' field3 = 'Value3' )."
+  },
+  {
+    "Scenario": "Internal table initialization",
+    "Before 7.40": "DATA: lt_data TYPE TABLE OF ty_s_data.\nDATA: ls_data TYPE ty_s_data.\nls_data-field1 = 'Value1'.\nAPPEND ls_data TO lt_data.\nCLEAR ls_data.\nls_data-field1 = 'Value2'.\nAPPEND ls_data TO lt_data.",
+    "With 7.40": "DATA(lt_data) = VALUE ty_t_data( ( field1 = 'Value1' ) ( field1 = 'Value2' ) )."
+  },
+  {
+    "Scenario": "Read table with index",
+    "Before 7.40": "READ TABLE lt_data INTO ls_data INDEX 1.\nIF sy-subrc = 0.\n  \"...\nENDIF.",
+    "With 7.40": "TRY.\n    ls_data = lt_data[ 1 ].\n    \"...\nCATCH cx_sy_itab_line_not_found.\n    \"...\nENDTRY."
+  },
+  {
+    "Scenario": "Read table with key reference",
+    "Before 7.40": "READ TABLE lt_data REFERENCE INTO lr_data WITH KEY matnr = '123'.\nIF sy-subrc = 0.\n  \"...\nENDIF.",
+    "With 7.40": "TRY.\n    DATA(lr_data) = REF #( lt_data[ matnr = '123' ] ).\n    \"...\nCATCH cx_sy_itab_line_not_found.\n    \"...\nENDTRY."
+  },
+  {
+    "Scenario": "Escape characters in strings",
+    "Before 7.40": "CONCATENATE 'John''s car' 'is red' INTO lv_text SEPARATED BY space.",
+    "With 7.40": "lv_text = |John's car is red|."
+  },
+  {
+    "Scenario": "Date formatting",
+    "Before 7.40": "WRITE: / lv_date.",
+    "With 7.40": "WRITE: / |{ lv_date DATE = USER }|."
+  },
+  {
+    "Scenario": "Checking multiple conditions",
+    "Before 7.40": "IF ( lv_var1 = 'A' AND lv_var2 = 'B' ) OR lv_var3 = 'C'.\n  \"...\nENDIF.",
+    "With 7.40": "IF xsdbool( ( lv_var1 = 'A' AND lv_var2 = 'B' ) OR lv_var3 = 'C' ).\n  \"...\nENDIF."
+  },
+  {
+    "Scenario": "Comparing table contents",
+    "Before 7.40": "READ TABLE lt_data1 TRANSPORTING NO FIELDS WITH KEY matnr = '123'.\nIF sy-subrc = 0.\n  READ TABLE lt_data2 TRANSPORTING NO FIELDS WITH KEY matnr = '123'.\n  IF sy-subrc <> 0.\n    \"...\n  ENDIF.\nENDIF.",
+    "With 7.40": "IF line_exists( lt_data1[ matnr = '123' ] ) AND NOT line_exists( lt_data2[ matnr = '123' ] ).\n  \"...\nENDIF."
+  },
+  {
+    "Scenario": "Calling method with parameters",
+    "Before 7.40": "DATA: lv_param1 TYPE string,\n      lv_param2 TYPE i.\nlv_param1 = 'Test'.\nlv_param2 = 123.\nlo_object->method( iv_param1 = lv_param1 iv_param2 = lv_param2 ).",
+    "With 7.40": "lo_object->method( iv_param1 = 'Test' iv_param2 = 123 )."
+  },
+  {
+    "Scenario": "Transforming data",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data>.\n  <fs_data>-amount = <fs_data>-amount * 1.1.\nENDLOOP.",
+    "With 7.40": "lt_data = VALUE #( FOR ls_data IN lt_data ( BASE ls_data amount = ls_data-amount * 1.1 ) )."
+  },
+  {
+    "Scenario": "Finding a specific element",
+    "Before 7.40": "DATA: lv_found_idx TYPE i,\n      lv_found TYPE abap_bool.\nLOOP AT lt_data ASSIGNING <fs_data>.\n  IF <fs_data>-matnr = '123'.\n    lv_found = abap_true.\n    lv_found_idx = sy-tabix.\n    EXIT.\n  ENDIF.\nENDLOOP.",
+    "With 7.40": "TRY.\n    DATA(lv_found_idx) = line_index( lt_data[ matnr = '123' ] ).\n    DATA(lv_found) = abap_true.\nCATCH cx_sy_itab_line_not_found.\n    DATA(lv_found) = abap_false.\nENDTRY."
+  },
+  {
+    "Scenario": "Mapping data",
+    "Before 7.40": "LOOP AT lt_source ASSIGNING <fs_source>.\n  APPEND INITIAL LINE TO lt_target ASSIGNING <fs_target>.\n  <fs_target>-target_field = <fs_source>-source_field.\nENDLOOP.",
+    "With 7.40": "lt_target = VALUE #( FOR ls_source IN lt_source ( target_field = ls_source-source_field ) )."
+  },
+  {
+    "Scenario": "Conditional loop",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data> WHERE matnr = '123' AND mtart = 'FERT'.\n  \"...\nENDLOOP.",
+    "With 7.40": "LOOP AT FILTER #( lt_data WHERE matnr = '123' AND mtart = 'FERT' ) INTO DATA(ls_data).\n  \"...\nENDLOOP."
+  },
+  {
+    "Scenario": "Checking variable existence",
+    "Before 7.40": "IF lv_data IS INITIAL.\n  \"...\nENDIF.",
+    "With 7.40": "IF lv_data IS INITIAL OR lv_data IS NOT BOUND.\n  \"...\nENDIF."
+  },
+  {
+    "Scenario": "DATA and FIELD-SYMBOLS declarations",
+    "Before 7.40": "DATA: lv_matnr TYPE matnr.\nFIELD-SYMBOLS: <fs_data> TYPE any.",
+    "With 7.40": "DATA(lv_matnr) = 'MAT123'.\nFIELD-SYMBOL(<fs_data>) TYPE any."
+  },
+  {
+    "Scenario": "MOVE CORRESPONDING",
+    "Before 7.40": "MOVE-CORRESPONDING struc1 TO struc2.",
+    "With 7.40": "struc2 = CORRESPONDING #( struc1 )."
+  },
+  {
+    "Scenario": "Manual field assignment",
+    "Before 7.40": "struc1-field1 = struc2-fielda.\nstruc1-field2 = struc2-fieldb.",
+    "With 7.40": "struc1 = VALUE #( BASE struc1 field1 = struc2-fielda field2 = struc2-fieldb )."
+  },
+  {
+    "Scenario": "CREATE DATA/CREATE OBJECT",
+    "Before 7.40": "DATA: lo_obj TYPE REF TO cl_class.\nCREATE OBJECT lo_obj.",
+    "With 7.40": "DATA(lo_obj) = NEW cl_class( )."
+  },
+  {
+    "Scenario": "GET REFERENCE OF",
+    "Before 7.40": "DATA: lr_data TYPE REF TO data.\nGET REFERENCE OF lv_value INTO lr_data.",
+    "With 7.40": "DATA(lr_data) = REF #( lv_value )."
+  },
+  {
+    "Scenario": "Single-use variables",
+    "Before 7.40": "DATA: lv_date TYPE d.\nlv_date = sy-datum.\nCALL METHOD process_date EXPORTING iv_date = lv_date.",
+    "With 7.40": "process_date( iv_date = sy-datum )."
+  },
+  {
+    "Scenario": "Type conversion helpers",
+    "Before 7.40": "DATA: lv_char TYPE c LENGTH 10,\n      lv_string TYPE string.\nlv_char = '123'.\nlv_string = lv_char.",
+    "With 7.40": "DATA(lv_string) = CONV string( '123' )."
+  },
+  {
+    "Scenario": "Casting with ?=",
+    "Before 7.40": "DATA: lo_super TYPE REF TO cl_super,\n      lo_sub TYPE REF TO cl_sub.\nlo_sub ?= lo_super.",
+    "With 7.40": "DATA(lo_sub) = CAST cl_sub( lo_super )."
+  },
+  {
+    "Scenario": "Conditional assignment",
+    "Before 7.40": "IF sy-subrc = 0.\n  lv_status = 'OK'.\nELSE.\n  lv_status = 'ERROR'.\nENDIF.",
+    "With 7.40": "lv_status = COND #( WHEN sy-subrc = 0 THEN 'OK' ELSE 'ERROR' )."
+  },
+  {
+    "Scenario": "READ TABLE",
+    "Before 7.40": "READ TABLE lt_data TRANSPORTING NO FIELDS WITH KEY matnr = '123'.\nIF sy-subrc = 0.\n  ...\nENDIF.",
+    "With 7.40": "TRY.\n    DATA(ls_data) = lt_data[ matnr = '123' ].\n    \"...\nCATCH cx_sy_itab_line_not_found.\n    \"...\nENDTRY."
+  },
+  {
+    "Scenario": "Check table existence",
+    "Before 7.40": "READ TABLE lt_data TRANSPORTING NO FIELDS WITH KEY matnr = '123'.",
+    "With 7.40": "IF line_exists( lt_data[ matnr = '123' ] ).\n  \"...\nENDIF."
+  },
+  {
+    "Scenario": "DEFAULT KEY tables",
+    "Before 7.40": "DATA: lt_data TYPE STANDARD TABLE OF mara WITH DEFAULT KEY.",
+    "With 7.40": "DATA: lt_data TYPE STANDARD TABLE OF mara WITH EMPTY KEY."
+  },
+  {
+    "Scenario": "LOOP processing",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data>.\n  \"...\nENDLOOP.",
+    "With 7.40": "DATA(lt_result) = VALUE string_table( FOR ls_data IN lt_data ( ls_data-matnr ) )."
+  },
+  {
+    "Scenario": "Method result checks",
+    "Before 7.40": "IF get_status( ) = abap_true.",
+    "With 7.40": "IF get_status( )."
+  },
+  {
+    "Scenario": "DO/WHILE loops",
+    "Before 7.40": "DO 10 TIMES.\n  \"...\nENDDO.",
+    "With 7.40": "DATA(lt_result) = VALUE int_tab( FOR i = 1 UNTIL i > 10 ( i ) )."
+  },
+  {
+    "Scenario": "Data aggregation",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data>.\n  lv_total += <fs_data>-amount.\nENDLOOP.",
+    "With 7.40": "DATA(lv_total) = REDUCE i( INIT sum = 0 FOR ls_data IN lt_data NEXT sum = sum + ls_data-amount )."
+  },
+  {
+    "Scenario": "Grouped data processing",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data>.\n  AT NEW matnr.\n    \"...\n  ENDAT.\nENDLOOP.",
+    "With 7.40": "LOOP AT lt_data INTO DATA(ls_data) GROUP BY ( matnr = ls_data-matnr ).\n  \"...\nENDLOOP."
+  },
+  {
+    "Scenario": "Filtering data",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data> WHERE matnr = '123'.\n  DELETE lt_data.\nENDLOOP.",
+    "With 7.40": "lt_data = FILTER #( lt_data WHERE matnr = '123' )."
+  },
+  {
+    "Scenario": "Type checking",
+    "Before 7.40": "DATA(lo_desc) = CAST cl_abap_typedescr( cl_abap_typedescr=>describe_by_data( lv_data ) ).",
+    "With 7.40": "CASE TYPE OF lv_data.\n  WHEN TYPE string.\n    \"...\n  WHEN OTHERS.\n    \"...\nENDCASE."
+  },
+  {
+    "Scenario": "String concatenation",
+    "Before 7.40": "CONCATENATE 'Hello' sy-uname INTO lv_text SEPARATED BY space.",
+    "With 7.40": "lv_text = |Hello { sy-uname }|."
+  },
+  {
+    "Scenario": "SQL expressions",
+    "Before 7.40": "SELECT matnr, mtart FROM mara INTO TABLE @lt_data WHERE matnr = @lv_matnr.",
+    "With 7.40": "SELECT FROM mara\n  FIELDS matnr, mtart\n  WHERE matnr = @lv_matnr\n  INTO TABLE @DATA(lt_data)."
+  },
+  {
+    "Scenario": "Structure initialization",
+    "Before 7.40": "DATA: ls_data TYPE ty_s_data.\nls_data-field1 = 'Value1'.\nls_data-field2 = 'Value2'.\nls_data-field3 = 'Value3'.",
+    "With 7.40": "DATA(ls_data) = VALUE ty_s_data( field1 = 'Value1' field2 = 'Value2' field3 = 'Value3' )."
+  },
+  {
+    "Scenario": "Internal table initialization",
+    "Before 7.40": "DATA: lt_data TYPE TABLE OF ty_s_data.\nDATA: ls_data TYPE ty_s_data.\nls_data-field1 = 'Value1'.\nAPPEND ls_data TO lt_data.\nCLEAR ls_data.\nls_data-field1 = 'Value2'.\nAPPEND ls_data TO lt_data.",
+    "With 7.40": "DATA(lt_data) = VALUE ty_t_data( ( field1 = 'Value1' ) ( field1 = 'Value2' ) )."
+  },
+  {
+    "Scenario": "Read table with index",
+    "Before 7.40": "READ TABLE lt_data INTO ls_data INDEX 1.\nIF sy-subrc = 0.\n  \"...\nENDIF.",
+    "With 7.40": "TRY.\n    ls_data = lt_data[ 1 ].\n    \"...\nCATCH cx_sy_itab_line_not_found.\n    \"...\nENDTRY."
+  },
+  {
+    "Scenario": "Read table with key reference",
+    "Before 7.40": "READ TABLE lt_data REFERENCE INTO lr_data WITH KEY matnr = '123'.\nIF sy-subrc = 0.\n  \"...\nENDIF.",
+    "With 7.40": "TRY.\n    DATA(lr_data) = REF #( lt_data[ matnr = '123' ] ).\n    \"...\nCATCH cx_sy_itab_line_not_found.\n    \"...\nENDTRY."
+  },
+  {
+    "Scenario": "Escape characters in strings",
+    "Before 7.40": "CONCATENATE 'John''s car' 'is red' INTO lv_text SEPARATED BY space.",
+    "With 7.40": "lv_text = |John's car is red|."
+  },
+  {
+    "Scenario": "Date formatting",
+    "Before 7.40": "WRITE: / lv_date.",
+    "With 7.40": "WRITE: / |{ lv_date DATE = USER }|."
+  },
+  {
+    "Scenario": "Checking multiple conditions",
+    "Before 7.40": "IF ( lv_var1 = 'A' AND lv_var2 = 'B' ) OR lv_var3 = 'C'.\n  \"...\nENDIF.",
+    "With 7.40": "IF xsdbool( ( lv_var1 = 'A' AND lv_var2 = 'B' ) OR lv_var3 = 'C' ).\n  \"...\nENDIF."
+  },
+  {
+    "Scenario": "Comparing table contents",
+    "Before 7.40": "READ TABLE lt_data1 TRANSPORTING NO FIELDS WITH KEY matnr = '123'.\nIF sy-subrc = 0.\n  READ TABLE lt_data2 TRANSPORTING NO FIELDS WITH KEY matnr = '123'.\n  IF sy-subrc <> 0.\n    \"...\n  ENDIF.\nENDIF.",
+    "With 7.40": "IF line_exists( lt_data1[ matnr = '123' ] ) AND NOT line_exists( lt_data2[ matnr = '123' ] ).\n  \"...\nENDIF."
+  },
+  {
+    "Scenario": "Calling method with parameters",
+    "Before 7.40": "DATA: lv_param1 TYPE string,\n      lv_param2 TYPE i.\nlv_param1 = 'Test'.\nlv_param2 = 123.\nlo_object->method( iv_param1 = lv_param1 iv_param2 = lv_param2 ).",
+    "With 7.40": "lo_object->method( iv_param1 = 'Test' iv_param2 = 123 )."
+  },
+  {
+    "Scenario": "Transforming data",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data>.\n  <fs_data>-amount = <fs_data>-amount * 1.1.\nENDLOOP.",
+    "With 7.40": "lt_data = VALUE #( FOR ls_data IN lt_data ( BASE ls_data amount = ls_data-amount * 1.1 ) )."
+  },
+  {
+    "Scenario": "Finding a specific element",
+    "Before 7.40": "DATA: lv_found_idx TYPE i,\n      lv_found TYPE abap_bool.\nLOOP AT lt_data ASSIGNING <fs_data>.\n  IF <fs_data>-matnr = '123'.\n    lv_found = abap_true.\n    lv_found_idx = sy-tabix.\n    EXIT.\n  ENDIF.\nENDLOOP.",
+    "With 7.40": "TRY.\n    DATA(lv_found_idx) = line_index( lt_data[ matnr = '123' ] ).\n    DATA(lv_found) = abap_true.\nCATCH cx_sy_itab_line_not_found.\n    DATA(lv_found) = abap_false.\nENDTRY."
+  },
+  {
+    "Scenario": "Mapping data",
+    "Before 7.40": "LOOP AT lt_source ASSIGNING <fs_source>.\n  APPEND INITIAL LINE TO lt_target ASSIGNING <fs_target>.\n  <fs_target>-target_field = <fs_source>-source_field.\nENDLOOP.",
+    "With 7.40": "lt_target = VALUE #( FOR ls_source IN lt_source ( target_field = ls_source-source_field ) )."
+  },
+  {
+    "Scenario": "Conditional loop",
+    "Before 7.40": "LOOP AT lt_data ASSIGNING <fs_data> WHERE matnr = '123' AND mtart = 'FERT'.\n  \"...\nENDLOOP.",
+    "With 7.40": "LOOP AT FILTER #( lt_data WHERE matnr = '123' AND mtart = 'FERT' ) INTO DATA(ls_data).\n  \"...\nENDLOOP."
+  },
+  {
+    "Scenario": "Checking variable existence",
+    "Before 7.40": "IF lv_data IS INITIAL.\n  \"...\nENDIF.",
+    "With 7.40": "IF lv_data IS INITIAL OR lv_data IS NOT BOUND.\n  \"...\nENDIF."
+  }
+
+]
