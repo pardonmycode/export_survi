@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://plex2ej6aar"]
+
+[ext_resource type="Script" uid="uid://cqytwxed864ei" path="res://area_2d.gd" id="1_tuh0n"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_aceia"]
+
+[node name="killZone" type="Node2D" unique_id=1952556393]
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1535397913]
+script = ExtResource("1_tuh0n")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1381814027]
+shape = SubResource("RectangleShape2D_aceia")
+
+[connection signal="body_entered" from="Area2D" to="Area2D" method="_on_body_entered"]
